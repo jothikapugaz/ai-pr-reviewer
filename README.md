@@ -49,6 +49,7 @@ It demonstrates the review workflow and includes a before/after comparison showi
 🏗️ Architecture
 
 flowchart TD
+   
     A["🔀 Pull Request<br/>Opened / Updated"] --> B["⚙️ GitHub Actions<br/>Workflow Trigger"]
 
     B --> C["📥 Fetch PR Diff<br/>GitHub REST API"]
@@ -75,13 +76,21 @@ flowchart TD
 🔄 How It Works
 
 flowchart LR
+   
     A["1️⃣ PR<br/>Opened / Updated"]
+    
     --> B["2️⃣ GitHub Actions<br/>Triggered"]
+    
     --> C["3️⃣ Fetch<br/>PR Diff"]
+    
     --> D["4️⃣ Run<br/>Pylint + Bandit"]
+    
     --> E["5️⃣ Collect<br/>Verified Findings"]
+    
     --> F["6️⃣ Send Diff + Findings<br/>to Groq LLM"]
+    
     --> G["7️⃣ Generate<br/>Structured Review"]
+    
     --> H["8️⃣ Post Review<br/>to GitHub"]
 
 Step-by-step
