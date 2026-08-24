@@ -1,10 +1,10 @@
 import os
 import requests
 
-def review_code(diff, groq_api_key):
+def review_code(diff, static_findings, groq_api_key):
     """
-    Sends the code diff to the Groq AI API and asks it to act as a
-    senior code reviewer. Returns the AI's written review as text.
+    Sends the code diff AND real static analysis results to the Groq AI API
+    and asks it to act as a senior code reviewer. Returns the AI's written review.
     """
 
     url = "https://api.groq.com/openai/v1/chat/completions"
@@ -15,18 +15,23 @@ def review_code(diff, groq_api_key):
     }
 
     prompt = f"""You are a senior software engineer doing a code review.
-Review the following code diff. Point out:
-- Bugs or logic errors
-- Security issues
-- Style/readability problems
-- Missing edge case handling
 
-Be specific and reference the actual lines when possible.
-Keep your review concise and use markdown formatting with headers and bullet points.
+Below are two things:
+1. The code diff (the actual changes)
+2. CONFIRMED findings from real static analysis tools (pylint + bandit) — these are FACTS, not guesses.
 
-Here is the diff:
+Your job:
+- Explain and expand on the confirmed findings in plain, helpful language
+- Only add NEW observations beyond the confirmed findings if you are highly confident they are real issues
+- If you are not sure something is an issue, say "possible issue" instead of stating it as fact
+- Do NOT invent problems about tools, configs, or permissions unless you can see clear evidence in the diff
+- Keep it concise, use markdown with headers and bullet points
 
+--- CODE DIFF ---
 {diff}
+
+--- CONFIRMED STATIC ANALYSIS FINDINGS ---
+{static_findings}
 """
 
     payload = {
@@ -52,5 +57,8 @@ if __name__ == "__main__":
     with open("diff.txt", "r") as f:
         diff = f.read()
 
-    review = review_code(diff, groq_api_key)
+    with open("static_analysis.txt", "r") as f:
+        static_findings = f.read()
+
+    review = review_code(diff, static_findings, groq_api_key)
     print(review)
